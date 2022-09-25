@@ -66,6 +66,11 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
 
             # TODO: Fetch the ICMP header from the IP packet
         ICMPHeader = recPacket.header()
+        ICMPData = recPacket.data()
+        ICMPCheckSum = checksum(str(ICMPheader + ICMPdata))
+         if timeLeft > 0:
+                return "sent."
+        
         
 
         #-------------#
