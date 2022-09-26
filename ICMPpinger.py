@@ -65,14 +65,17 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #---------------#
 
             # TODO: Fetch the ICMP header from the IP packet
-        print(type(recPacket))
-        ICMPHeader = recPacket[20:24]
-        print(str(ICMPHeader))
-        ICMPID = recPacket[24]
-        ICMPChecksum = recPacket[22:23]
-        print("pinging")
-        print(timeReceived - startedSelect)
-        if ICMPID == ID:
+        #print(type(recPacket))
+        ICMPHeader = recPacket[20:28]
+        #print(str(ICMPHeader))
+        recType, recCode, recCheckSum, recID, recSequence = struct.unpack("bbHHh", ICMPHeader)
+        ##print("pinging")
+        #print("time: ")
+        #print(timeReceived - startedSelect)
+        #print("icmp"+str(recID))
+        #print("id"+str(ID))
+        if recID == ID:
+            #print("equal")
             return timeReceived - startedSelect
         
         
@@ -101,6 +104,7 @@ def sendOnePing(mySocket, destAddr, ID):
 
     # Calculate the checksum on the data and the dummy header. 
     myChecksum = checksum(''.join(map(chr, header+data)))
+    
 
     # Get the right checksum, and put in the header 
     if sys.platform == 'darwin':
@@ -131,6 +135,7 @@ def doOnePing(destAddr, timeout):
     delay = receiveOnePing(mySocket, myID, timeout, destAddr)
  
     mySocket.close() 
+    #print(delay)
     return delay
 
 
