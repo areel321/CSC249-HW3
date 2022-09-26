@@ -65,8 +65,15 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #---------------#
 
             # TODO: Fetch the ICMP header from the IP packet
-        ICMPHeader = ICMP_ECHO_REPLY.header()
-        ICMPData = recPacket.data()
+        print(type(recPacket))
+        ICMPHeader = recPacket[20:24]
+        print(str(ICMPHeader))
+        ICMPID = recPacket[24]
+        ICMPChecksum = recPacket[22:23]
+        print("pinging")
+        print(timeReceived - startedSelect)
+        if ICMPID == ID:
+            return timeReceived - startedSelect
         
         
         
