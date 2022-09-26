@@ -50,6 +50,7 @@ def build_packet():
     return packet
 
 def get_route(hostname):
+    print("getroute")
     timeLeft = TIMEOUT
     for ttl in range(1,MAX_HOPS):
         for tries in range(TRIES):
@@ -60,7 +61,8 @@ def get_route(hostname):
             #---------------#
 
                 # TODO: Make a raw socket named mySocket
-            mySocket = socket(AF_INET, SOCK_RAW, hostname)
+            icmp = getprotobyname("icmp")
+            mySocket = socket(AF_INET, SOCK_RAW, icmp)
 
             #-------------#
             # Fill in end #
@@ -96,8 +98,8 @@ def get_route(hostname):
                 #---------------#
 
                     #TODO: Fetch the icmp type from the IP packet
-                ICMPHeader = recvPacket[20:28]
-                recType, recCode, recCheckSum, recID, recSequence = struct.unpack("bbHHh", ICMPHeader)
+                recHeader = recvPacket[20:28]
+                recType, recCode, recCheckSum, recID, recSequence = struct.unpack("bbHHh", recHeader)
                 types = recType
 
 
