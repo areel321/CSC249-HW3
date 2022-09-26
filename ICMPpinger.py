@@ -137,7 +137,6 @@ def doOnePing(destAddr, timeout):
     delay = receiveOnePing(mySocket, myID, timeout, destAddr)
  
     mySocket.close() 
-    #print(delay)
     return delay
 
 
