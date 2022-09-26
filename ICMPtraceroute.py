@@ -29,6 +29,17 @@ def build_packet():
 
         # TODO: Make the header in a similar way to the ping exercise.
         # Append checksum to the header.
+    myChecksum = 0
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, 1) 
+    data = struct.pack("d", time.time())
+    myChecksum = checksum(''.join(map(chr, header+data)))
+    if sys.platform == 'darwin':
+        # Convert 16-bit integers from host to network byte order 
+        myChecksum = htons(myChecksum) & 0xffff
+    else:
+        myChecksum = htons(myChecksum)
+
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, 1) 
         
     #-------------#
     # Fill in end #
@@ -49,6 +60,7 @@ def get_route(hostname):
             #---------------#
 
                 # TODO: Make a raw socket named mySocket
+            mySocket = socket(AF_INET, SOCK_RAW, hostname)
 
             #-------------#
             # Fill in end #
@@ -84,6 +96,10 @@ def get_route(hostname):
                 #---------------#
 
                     #TODO: Fetch the icmp type from the IP packet
+                ICMPHeader = recvPacket[20:28]
+                recType, recCode, recCheckSum, recID, recSequence = struct.unpack("bbHHh", ICMPHeader)
+                types = recType
+
 
                 #-------------#
                 # Fill in end #
