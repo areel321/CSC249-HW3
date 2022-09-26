@@ -76,7 +76,9 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #print("id"+str(ID))
         if recID == ID:
             #print("equal")
-            return timeReceived - startedSelect
+            bytes = struct.calcsize("d")
+            timeSent = struct.unpack("d", recPacket[28:28 +bytes])[0]
+            return timeReceived - timeSent
         
         
         
