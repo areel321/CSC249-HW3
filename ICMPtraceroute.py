@@ -30,7 +30,8 @@ def build_packet():
         # TODO: Make the header in a similar way to the ping exercise.
         # Append checksum to the header.
     myChecksum = 0
-    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, 1) 
+    myID = os.getpid() & 0xFFFF
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, myID, 1) 
     data = struct.pack("d", time.time())
     myChecksum = checksum(''.join(map(chr, header+data)))
     if sys.platform == 'darwin':
@@ -39,7 +40,7 @@ def build_packet():
     else:
         myChecksum = htons(myChecksum)
 
-    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, 1) 
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, myID, 1) 
         
     #-------------#
     # Fill in end #
@@ -50,7 +51,6 @@ def build_packet():
     return packet
 
 def get_route(hostname):
-    print("getroute")
     timeLeft = TIMEOUT
     for ttl in range(1,MAX_HOPS):
         for tries in range(TRIES):
@@ -63,6 +63,7 @@ def get_route(hostname):
                 # TODO: Make a raw socket named mySocket
             icmp = getprotobyname("icmp")
             mySocket = socket(AF_INET, SOCK_RAW, icmp)
+            
 
             #-------------#
             # Fill in end #
@@ -78,6 +79,7 @@ def get_route(hostname):
                 startedSelect = time.time()
                 whatReady = select.select([mySocket], [], [], timeLeft)
                 howLongInSelect = (time.time() - startedSelect)
+                
 
                 if whatReady[0] == []: # Timeout
                     print(" * * * Request timed out.")
