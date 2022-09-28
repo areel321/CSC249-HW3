@@ -65,19 +65,17 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #---------------#
 
             # TODO: Fetch the ICMP header from the IP packet
-        #print(type(recPacket))
+        #parse the packet to isolate the header
         ICMPHeader = recPacket[20:28]
-        #print(str(ICMPHeader))
+        #i reasearched the struct function python documentation for how to use unpack here https://docs.python.org/3/library/struct.html
         recType, recCode, recCheckSum, recID, recSequence = struct.unpack("bbHHh", ICMPHeader)
-        ##print("pinging")
-        #print("time: ")
-        #print(timeReceived - startedSelect)
-        #print("icmp"+str(recID))
-        #print("id"+str(ID))
+        
+        #check that the packet is the intended sent packet
         if recID == ID:
-            #print("equal")
+            #extract the time sent from the packet
             bytes = struct.calcsize("d")
             timeSent = struct.unpack("d", recPacket[28:28 +bytes])[0]
+            #return the total travel time as time recieved - time sent
             return timeReceived - timeSent
         
         
